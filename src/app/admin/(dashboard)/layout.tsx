@@ -2,12 +2,17 @@ import Link from "next/link";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SignOutButton } from "@/components/admin/SignOutButton";
+import { AdminTag } from "@/components/admin/ui";
 import { site } from "@/lib/site";
 
 const adminNav = [
-  { label: "Quotes", href: "/admin/quotes" },
-  { label: "Case Studies", href: "/admin/case-studies" },
-  { label: "Blog", href: "/admin/blog" },
+  { label: "Overview", href: "/admin#overview" },
+  { label: "Quotes", href: "/admin#quotes" },
+  { label: "Calendar", href: "/admin#calendar" },
+  { label: "Our Work", href: "/admin#case-studies" },
+  { label: "Blog", href: "/admin#blog" },
+  { label: "Clients", href: "/admin#clients" },
+  { label: "Settings", href: "/admin#settings" },
 ];
 
 export default function AdminDashboardLayout({
@@ -17,28 +22,25 @@ export default function AdminDashboardLayout({
 }) {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-50 border-b border-border bg-background/85 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
-          <Link
-            href="/admin/quotes"
-            className="flex items-center gap-2.5 font-display text-lg font-semibold tracking-tight"
-          >
+      <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-md">
+        <div className="mx-auto flex max-w-[1320px] flex-wrap items-center justify-between gap-4 px-8 py-4">
+          <Link href="/admin" className="flex items-center gap-2.5">
             <Logo className="h-7 w-7" />
-            {site.name}
-            <span className="rounded-full border border-border px-2 py-0.5 text-xs font-medium text-muted">
-              Admin
+            <span className="font-display text-lg font-semibold uppercase tracking-wide">
+              {site.name}
             </span>
+            <AdminTag variant="outline">Admin</AdminTag>
           </Link>
 
-          <nav className="flex flex-wrap items-center gap-5">
+          <nav className="flex flex-wrap gap-0.5">
             {adminNav.map((item) => (
-              <Link
+              <a
                 key={item.href}
                 href={item.href}
-                className="text-sm text-muted transition-colors hover:text-foreground"
+                className="px-3 py-2 text-sm font-semibold text-muted transition-colors hover:text-foreground"
               >
                 {item.label}
-              </Link>
+              </a>
             ))}
           </nav>
 
@@ -49,7 +51,7 @@ export default function AdminDashboardLayout({
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 py-10">{children}</main>
+      <main className="mx-auto max-w-[1320px] px-8 pb-24">{children}</main>
     </div>
   );
 }
