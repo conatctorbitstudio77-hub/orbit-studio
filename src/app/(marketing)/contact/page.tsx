@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { BookingWidget } from "@/components/BookingWidget";
 import { ContactForm } from "@/components/ContactForm";
 import { Eyebrow, Section } from "@/components/Section";
 import { Reveal } from "@/components/motion/Reveal";
+import { BUSINESS_TIMEZONE_LABEL } from "@/lib/booking";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -35,6 +37,23 @@ export default function ContactPage() {
           <ContactForm />
         </Reveal>
       </div>
+
+      <Reveal delay={0.15}>
+        <div className="mt-16 border-t border-border pt-16">
+          <Eyebrow>Prefer to talk it through?</Eyebrow>
+          <h2 className="font-display text-2xl font-semibold tracking-tight md:text-3xl">
+            Book a call instead.
+          </h2>
+          <p className="mt-3 max-w-xl text-sm text-muted">
+            Pick a time that works — evenings after 5pm on weekdays, or
+            anytime on weekends ({BUSINESS_TIMEZONE_LABEL}). We&apos;ll call
+            you, no need to fill out the form above.
+          </p>
+          <div className="mt-8 max-w-2xl">
+            <BookingWidget />
+          </div>
+        </div>
+      </Reveal>
     </Section>
   );
 }
