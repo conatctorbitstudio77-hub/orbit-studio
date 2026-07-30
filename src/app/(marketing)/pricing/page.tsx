@@ -13,6 +13,10 @@ export const metadata: Metadata = {
     "Buy your website once and own it outright, then keep it fast, secure, and growing with an optional Orbit Care plan. No lock-in, cancel anytime.",
 };
 
+// Pricing tiers are admin-editable in Supabase — render dynamically so
+// changes show immediately instead of waiting for the next deploy.
+export const dynamic = "force-dynamic";
+
 export default async function PricingPage() {
   const { oneTime, monthly } = await getPricingTiers();
 

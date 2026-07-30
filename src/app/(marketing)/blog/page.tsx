@@ -13,6 +13,10 @@ export const metadata: Metadata = {
     "Practical guides on getting found online and booking more jobs — written for local service business owners, not marketers.",
 };
 
+// Posts are admin-editable in Supabase — render dynamically so publishing
+// a post shows immediately instead of waiting for the next deploy.
+export const dynamic = "force-dynamic";
+
 /**
  * Fetches published posts from Supabase. Falls back to the static
  * "coming soon" stubs on any failure, same pattern as /work.

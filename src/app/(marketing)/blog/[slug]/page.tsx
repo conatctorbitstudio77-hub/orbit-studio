@@ -7,6 +7,10 @@ import { Reveal } from "@/components/motion/Reveal";
 import { createPublicClient } from "@/lib/supabase/public";
 import type { BlogPostRecord } from "@/lib/admin/types";
 
+// Posts are admin-editable in Supabase — render dynamically so publishing
+// a post shows immediately instead of waiting for the next deploy.
+export const dynamic = "force-dynamic";
+
 async function getPost(slug: string): Promise<BlogPostRecord | null> {
   try {
     const supabase = createPublicClient();

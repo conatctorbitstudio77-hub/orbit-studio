@@ -11,6 +11,10 @@ export const metadata: Metadata = {
     "Straight answers about pricing, timelines, ownership, and support — before you get on a call.",
 };
 
+// FAQs are admin-editable in Supabase — render dynamically so changes show
+// immediately instead of waiting for the next deploy.
+export const dynamic = "force-dynamic";
+
 export default async function FaqPage() {
   const faqs = await getFaqs();
 

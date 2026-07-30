@@ -14,6 +14,10 @@ export const metadata: Metadata = {
     "Real websites built for real local service businesses. Every case study links to a live site — no mockups.",
 };
 
+// Case studies are admin-editable in Supabase — render dynamically so
+// publishing one shows immediately instead of waiting for the next deploy.
+export const dynamic = "force-dynamic";
+
 const placeholders: WorkCardData[] = placeholderCaseStudies.map((cs) => ({
   slug: cs.slug,
   title: cs.client,
