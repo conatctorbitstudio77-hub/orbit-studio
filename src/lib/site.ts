@@ -6,7 +6,7 @@ export const site = {
   email: "conatctorbitstudio77@gmail.com",
   phone: "(555) 010-2040",
   city: "Edmundston",
-  url: "https://orbitstudio.co",
+  url: "https://orbitstudio.cc",
 };
 
 export const nav = [
