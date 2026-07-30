@@ -3,7 +3,7 @@ import { Button } from "@/components/Button";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { Eyebrow, Section } from "@/components/Section";
 import { Reveal } from "@/components/motion/Reveal";
-import { faqs } from "@/lib/faq";
+import { getFaqs } from "@/lib/supabase/content";
 
 export const metadata: Metadata = {
   title: "FAQ",
@@ -11,20 +11,22 @@ export const metadata: Metadata = {
     "Straight answers about pricing, timelines, ownership, and support — before you get on a call.",
 };
 
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqs.map((faq) => ({
-    "@type": "Question",
-    name: faq.question,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: faq.answer,
-    },
-  })),
-};
+export default async function FaqPage() {
+  const faqs = await getFaqs();
 
-export default function FaqPage() {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  };
+
   return (
     <>
       <script

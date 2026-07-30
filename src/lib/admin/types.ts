@@ -42,3 +42,56 @@ export type BlogPostRecord = {
   published: boolean;
   published_at: string | null;
 };
+
+export type SiteStatus = "live" | "in_progress" | "planned";
+
+export type ClientRecord = {
+  id: string;
+  created_at: string;
+  business_name: string;
+  contact_name: string | null;
+  industry: string | null;
+  site_status: SiteStatus;
+  quote_id: string | null;
+};
+
+export type CalendarEventType = "Deadline" | "Deliverable" | "Meeting";
+
+export type CalendarEventRecord = {
+  id: string;
+  created_at: string;
+  event_date: string;
+  title: string;
+  type: CalendarEventType;
+};
+
+export type SiteSettingsRecord = {
+  id: true;
+  hero_title: string | null;
+  hero_subtitle: string | null;
+  updated_at: string;
+};
+
+export type PricingTierKind = "one-time" | "monthly";
+
+export type PricingTierRecord = {
+  id: string;
+  created_at: string;
+  kind: PricingTierKind;
+  name: string;
+  tagline: string | null;
+  price: string;
+  billing_label: string;
+  best_for: string | null;
+  includes: string[];
+  featured: boolean;
+  display_order: number;
+};
+
+export type FaqRecord = {
+  id: string;
+  created_at: string;
+  question: string;
+  answer: string;
+  display_order: number;
+};

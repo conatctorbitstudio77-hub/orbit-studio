@@ -4,7 +4,8 @@ import { FaqAccordion } from "@/components/FaqAccordion";
 import { PricingSwitcher } from "@/components/PricingSwitcher";
 import { Eyebrow, Section } from "@/components/Section";
 import { Reveal } from "@/components/motion/Reveal";
-import { carePlans, pricingFaqs, tiers } from "@/lib/site";
+import { pricingFaqs } from "@/lib/site";
+import { getPricingTiers } from "@/lib/supabase/content";
 
 export const metadata: Metadata = {
   title: "Pricing — Simple Pricing for Every Stage of Growth",
@@ -12,7 +13,9 @@ export const metadata: Metadata = {
     "Buy your website once and own it outright, then keep it fast, secure, and growing with an optional Orbit Care plan. No lock-in, cancel anytime.",
 };
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const { oneTime, monthly } = await getPricingTiers();
+
   return (
     <>
       <Section className="border-b border-border pt-16 text-center">
@@ -33,7 +36,7 @@ export default function PricingPage() {
 
       <Section className="border-b border-border">
         <Reveal>
-          <PricingSwitcher oneTime={tiers} monthly={carePlans} />
+          <PricingSwitcher oneTime={oneTime} monthly={monthly} />
         </Reveal>
 
         <Reveal>

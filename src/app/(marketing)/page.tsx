@@ -7,7 +7,8 @@ import { ParallaxLayer } from "@/components/motion/ParallaxLayer";
 import { ProcessCards } from "@/components/motion/ProcessCards";
 import { Reveal } from "@/components/motion/Reveal";
 import { RevealGroup, RevealItem } from "@/components/motion/RevealGroup";
-import { caseStudies, tiers } from "@/lib/site";
+import { caseStudies } from "@/lib/site";
+import { getHeroCopy, getPricingTiers } from "@/lib/supabase/content";
 
 const workPreview: WorkCardData[] = caseStudies.map((cs) => ({
   slug: cs.slug,
@@ -79,7 +80,10 @@ const process = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const [hero, pricing] = await Promise.all([getHeroCopy(), getPricingTiers()]);
+  const tiers = pricing.oneTime;
+
   return (
     <>
       <section className="relative overflow-hidden border-b border-border">
@@ -94,15 +98,11 @@ export default function Home() {
           </Reveal>
           <Reveal delay={0.08}>
             <h1 className="max-w-3xl text-balance font-display text-4xl font-semibold leading-tight tracking-tight md:text-6xl">
-              Stop losing jobs to the competitor with the better website.
+              {hero.title}
             </h1>
           </Reveal>
           <Reveal delay={0.16}>
-            <p className="max-w-xl text-lg text-muted">
-              Orbit Studio builds fast, high-converting websites for HVAC,
-              plumbing, electrical, roofing, and landscaping companies —
-              fixed price, no subscriptions, real support after launch.
-            </p>
+            <p className="max-w-xl text-lg text-muted">{hero.subtitle}</p>
           </Reveal>
           <Reveal delay={0.24}>
             <div className="flex flex-col gap-4 sm:flex-row">
