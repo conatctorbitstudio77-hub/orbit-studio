@@ -56,13 +56,19 @@ export type ClientRecord = {
 };
 
 export type CalendarEventType = "Deadline" | "Deliverable" | "Meeting";
+export type CalendarEventSource = "manual" | "booking";
 
 export type CalendarEventRecord = {
   id: string;
   created_at: string;
   event_date: string;
+  event_time: string | null;
   title: string;
   type: CalendarEventType;
+  contact_name: string | null;
+  contact_email: string | null;
+  contact_phone: string | null;
+  source: CalendarEventSource;
 };
 
 export type SiteSettingsRecord = {

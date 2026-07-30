@@ -10,6 +10,7 @@ import {
   SectionHeading,
   adminInputClass,
 } from "@/components/admin/ui";
+import { formatSlotLabel } from "@/lib/booking";
 import { createClient } from "@/lib/supabase/client";
 import type { CalendarEventRecord, CalendarEventType } from "@/lib/admin/types";
 
@@ -87,7 +88,11 @@ export function CalendarSection({ events }: { events: CalendarEventRecord[] }) {
     () =>
       [...events]
         .filter((ev) => ev.event_date >= todayStr)
-        .sort((a, b) => a.event_date.localeCompare(b.event_date))
+        .sort((a, b) => {
+          const dateCompare = a.event_date.localeCompare(b.event_date);
+          if (dateCompare !== 0) return dateCompare;
+          return (a.event_time || "").localeCompare(b.event_time || "");
+        })
         .slice(0, 6),
     [events, todayStr]
   );
@@ -146,7 +151,10 @@ export function CalendarSection({ events }: { events: CalendarEventRecord[] }) {
     router.refresh();
   }
 
-  const selectedDayEvents = selectedDate ? eventsByDate[selectedDate] || [] : [];
+  const selectedDayEvents = useMemo(() => {
+    const list = selectedDate ? eventsByDate[selectedDate] || [] : [];
+    return [...list].sort((a, b) => (a.event_time || "").localeCompare(b.event_time || ""));
+  }, [selectedDate, eventsByDate]);
   const selectedDateLabel = selectedDate
     ? (() => {
         const [y, m, d] = selectedDate.split("-").map(Number);
@@ -245,19 +253,30 @@ export function CalendarSection({ events }: { events: CalendarEventRecord[] }) {
               </div>
 
               {selectedDayEvents.length > 0 && (
-                <div className="mt-4 grid gap-2">
+                <div className="mt-4 grid gap-3">
                   {selectedDayEvents.map((ev) => (
-                    <div
-                      key={ev.id}
-                      className="flex items-center justify-between border-t border-border pt-2"
-                    >
-                      <span>
-                        <AdminTag variant="accent">{ev.type}</AdminTag>
-                        <span className="ml-2">{ev.title}</span>
-                      </span>
-                      <AdminButton onClick={() => removeEvent(ev.id)} disabled={busy}>
-                        Remove
-                      </AdminButton>
+                    <div key={ev.id} className="border-t border-border pt-2">
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="flex flex-wrap items-center gap-2">
+                          {ev.event_time && (
+                            <span className="font-display text-sm font-semibold text-accent-text">
+                              {formatSlotLabel(ev.event_time)}
+                            </span>
+                          )}
+                          <AdminTag variant={ev.source === "booking" ? "accent" : "neutral"}>
+                            {ev.source === "booking" ? "Booked call" : ev.type}
+                          </AdminTag>
+                          <span>{ev.title}</span>
+                        </span>
+                        <AdminButton onClick={() => removeEvent(ev.id)} disabled={busy}>
+                          Remove
+                        </AdminButton>
+                      </div>
+                      {ev.source === "booking" && (
+                        <p className="mt-1 text-xs text-muted">
+                          {[ev.contact_email, ev.contact_phone].filter(Boolean).join(" · ")}
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -282,10 +301,18 @@ export function CalendarSection({ events }: { events: CalendarEventRecord[] }) {
                   <div>
                     <div className="text-xs font-semibold uppercase tracking-wide text-accent-text">
                       {MONTHS[m - 1].slice(0, 3)} {d}
+                      {ev.event_time && ` · ${formatSlotLabel(ev.event_time)}`}
                     </div>
                     <div className="mt-0.5 text-sm">{ev.title}</div>
+                    {ev.source === "booking" && (
+                      <div className="mt-0.5 text-xs text-muted">
+                        {[ev.contact_email, ev.contact_phone].filter(Boolean).join(" · ")}
+                      </div>
+                    )}
                   </div>
-                  <AdminTag variant="outline">{ev.type}</AdminTag>
+                  <AdminTag variant={ev.source === "booking" ? "accent" : "outline"}>
+                    {ev.source === "booking" ? "Booked call" : ev.type}
+                  </AdminTag>
                 </div>
               );
             })}
