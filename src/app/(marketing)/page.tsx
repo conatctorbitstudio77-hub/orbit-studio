@@ -10,6 +10,10 @@ import { RevealGroup, RevealItem } from "@/components/motion/RevealGroup";
 import { caseStudies } from "@/lib/site";
 import { getHeroCopy, getPricingTiers } from "@/lib/supabase/content";
 
+// Hero copy and pricing are admin-editable in Supabase — render dynamically
+// so changes show immediately instead of waiting for the next deploy.
+export const dynamic = "force-dynamic";
+
 const workPreview: WorkCardData[] = caseStudies.map((cs) => ({
   slug: cs.slug,
   title: cs.client,
