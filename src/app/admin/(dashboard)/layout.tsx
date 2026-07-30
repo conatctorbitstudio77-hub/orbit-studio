@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { HydrationGate } from "@/components/admin/HydrationGate";
 import { SignOutButton } from "@/components/admin/SignOutButton";
 import { AdminTag } from "@/components/admin/ui";
 import { site } from "@/lib/site";
@@ -51,7 +52,9 @@ export default function AdminDashboardLayout({
         </div>
       </header>
 
-      <main className="mx-auto max-w-[1320px] px-8 pb-24">{children}</main>
+      <main className="mx-auto max-w-[1320px] px-8 pb-24">
+        <HydrationGate>{children}</HydrationGate>
+      </main>
     </div>
   );
 }
