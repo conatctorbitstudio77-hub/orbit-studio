@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ExternalLink } from "lucide-react";
 import {
   AdminButton,
   AdminField,
@@ -19,9 +20,16 @@ type Draft = {
   client: string;
   industry: string;
   summary: string;
+  websiteUrl: string;
 };
 
-const emptyDraft: Draft = { title: "", client: "", industry: industries[0], summary: "" };
+const emptyDraft: Draft = {
+  title: "",
+  client: "",
+  industry: industries[0],
+  summary: "",
+  websiteUrl: "",
+};
 
 function slugify(value: string) {
   return value
@@ -49,6 +57,7 @@ export function CaseStudiesSection({ caseStudies }: { caseStudies: CaseStudyReco
       industry: draft.industry,
       summary: draft.summary.trim() || `Case study for ${draft.client.trim()}.`,
       results: null,
+      website_url: draft.websiteUrl.trim() || null,
       published: false,
       display_order: caseStudies.length,
     });
@@ -67,7 +76,13 @@ export function CaseStudiesSection({ caseStudies }: { caseStudies: CaseStudyReco
 
   function startEdit(cs: CaseStudyRecord) {
     setEditingId(cs.id);
-    setEditDraft({ title: cs.title, client: "", industry: cs.industry, summary: cs.summary });
+    setEditDraft({
+      title: cs.title,
+      client: "",
+      industry: cs.industry,
+      summary: cs.summary,
+      websiteUrl: cs.website_url ?? "",
+    });
   }
 
   async function saveEdit(id: string) {
@@ -79,6 +94,7 @@ export function CaseStudiesSection({ caseStudies }: { caseStudies: CaseStudyReco
         title: editDraft.title.trim(),
         industry: editDraft.industry,
         summary: editDraft.summary.trim(),
+        website_url: editDraft.websiteUrl.trim() || null,
       })
       .eq("id", id);
     setBusy(false);
@@ -174,6 +190,17 @@ export function CaseStudiesSection({ caseStudies }: { caseStudies: CaseStudyReco
               />
             </AdminField>
           </div>
+          <div className="mt-3">
+            <AdminField label="Website URL">
+              <input
+                type="url"
+                placeholder="https://client-site.com"
+                className={adminInputClass}
+                value={draft.websiteUrl}
+                onChange={(e) => setDraft((d) => ({ ...d, websiteUrl: e.target.value }))}
+              />
+            </AdminField>
+          </div>
           <div className="mt-4 flex gap-2">
             <AdminButton variant="primary" onClick={submit} disabled={busy}>
               Save case study
@@ -219,6 +246,15 @@ export function CaseStudiesSection({ caseStudies }: { caseStudies: CaseStudyReco
                     onChange={(e) => setEditDraft((d) => ({ ...d, summary: e.target.value }))}
                   />
                 </AdminField>
+                <AdminField label="Website URL">
+                  <input
+                    type="url"
+                    placeholder="https://client-site.com"
+                    className={adminInputClass}
+                    value={editDraft.websiteUrl}
+                    onChange={(e) => setEditDraft((d) => ({ ...d, websiteUrl: e.target.value }))}
+                  />
+                </AdminField>
               </div>
               <div className="mt-4 flex gap-2">
                 <AdminButton variant="primary" onClick={() => saveEdit(cs.id)} disabled={busy}>
@@ -234,6 +270,17 @@ export function CaseStudiesSection({ caseStudies }: { caseStudies: CaseStudyReco
               </span>
               <p className="font-display text-lg font-semibold">{cs.title}</p>
               <p className="mt-2 flex-1 text-sm text-muted">{cs.summary}</p>
+              {cs.website_url && (
+                <a
+                  href={cs.website_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-flex items-center gap-1.5 self-start text-sm font-medium text-accent-text hover:underline"
+                >
+                  Visit site
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              )}
               <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
                 <AdminTag variant={cs.published ? "accent" : "neutral"}>
                   {cs.published ? "Published" : "Draft"}

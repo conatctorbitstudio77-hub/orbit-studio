@@ -119,38 +119,3 @@ export const pricingFaqs = [
       "They're starting anchors. Every project gets a firm quote after a real conversation about scope — no surprises later.",
   },
 ];
-
-export type CaseStudy = {
-  slug: string;
-  client: string;
-  industry: string;
-  result: string;
-  summary: string;
-};
-
-export const caseStudies: CaseStudy[] = [
-  {
-    slug: "coming-soon-hvac",
-    client: "First HVAC client",
-    industry: "HVAC",
-    result: "Case study in progress",
-    summary:
-      "We're onboarding our first cohort of local clients now. This slot is reserved for the first HVAC build — real results, published the day the site goes live.",
-  },
-  {
-    slug: "coming-soon-plumbing",
-    client: "First plumbing client",
-    industry: "Plumbing",
-    result: "Case study in progress",
-    summary:
-      "Reserved for the first plumbing company build. Every case study we publish links to a live, real site — no mockups.",
-  },
-  {
-    slug: "coming-soon-landscaping",
-    client: "First landscaping client",
-    industry: "Landscaping",
-    result: "Case study in progress",
-    summary:
-      "Reserved for the first landscaping build. Before/after gallery and lead numbers go here once the project ships.",
-  },
-];

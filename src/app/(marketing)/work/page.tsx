@@ -4,7 +4,6 @@ import { Eyebrow, Section } from "@/components/Section";
 import { WorkCard, type WorkCardData } from "@/components/WorkCard";
 import { Reveal } from "@/components/motion/Reveal";
 import { RevealGroup, RevealItem } from "@/components/motion/RevealGroup";
-import { caseStudies as placeholderCaseStudies } from "@/lib/site";
 import { createPublicClient } from "@/lib/supabase/public";
 import type { CaseStudyRecord } from "@/lib/admin/types";
 
@@ -18,21 +17,7 @@ export const metadata: Metadata = {
 // publishing one shows immediately instead of waiting for the next deploy.
 export const dynamic = "force-dynamic";
 
-const placeholders: WorkCardData[] = placeholderCaseStudies.map((cs) => ({
-  slug: cs.slug,
-  title: cs.client,
-  industry: cs.industry,
-  badge: cs.result,
-  summary: cs.summary,
-  thumbnailUrl: null,
-}));
-
-/**
- * Fetches published case studies from Supabase. Falls back to the
- * static "coming soon" placeholders on any failure — missing env vars,
- * a Supabase outage, or simply zero published rows — so this page can
- * never show a broken or empty state.
- */
+/** Published case studies from Supabase — real content only, no placeholders. */
 async function getCaseStudies(): Promise<WorkCardData[]> {
   try {
     const supabase = createPublicClient();
@@ -43,8 +28,9 @@ async function getCaseStudies(): Promise<WorkCardData[]> {
       .order("display_order", { ascending: true })
       .returns<CaseStudyRecord[]>();
 
-    if (error || !data || data.length === 0) {
-      return placeholders;
+    if (error || !data) {
+      if (error) console.error("[work] Failed to load case studies:", error);
+      return [];
     }
 
     return data.map((cs) => ({
@@ -54,10 +40,11 @@ async function getCaseStudies(): Promise<WorkCardData[]> {
       badge: cs.results || "Live project",
       summary: cs.summary,
       thumbnailUrl: cs.thumbnail_url,
+      websiteUrl: cs.website_url,
     }));
   } catch (error) {
-    console.error("[work] Falling back to placeholder case studies:", error);
-    return placeholders;
+    console.error("[work] Failed to load case studies:", error);
+    return [];
   }
 }
 
@@ -82,13 +69,22 @@ export default async function WorkPage() {
       </Section>
 
       <Section>
-        <RevealGroup className="grid gap-6 md:grid-cols-3">
-          {items.map((study, i) => (
-            <RevealItem key={study.slug}>
-              <WorkCard study={study} index={i} />
-            </RevealItem>
-          ))}
-        </RevealGroup>
+        {items.length > 0 ? (
+          <RevealGroup className="grid gap-6 md:grid-cols-3">
+            {items.map((study, i) => (
+              <RevealItem key={study.slug}>
+                <WorkCard study={study} index={i} />
+              </RevealItem>
+            ))}
+          </RevealGroup>
+        ) : (
+          <Reveal>
+            <p className="text-muted">
+              We&apos;re onboarding our first cohort of clients right now —
+              check back soon for real case studies.
+            </p>
+          </Reveal>
+        )}
 
         <Reveal>
           <div className="mt-16 rounded-3xl border border-border bg-surface px-8 py-14 text-center">

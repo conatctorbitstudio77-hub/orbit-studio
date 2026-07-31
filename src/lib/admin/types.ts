@@ -28,6 +28,7 @@ export type CaseStudyRecord = {
   summary: string;
   results: string | null;
   thumbnail_url: string | null;
+  website_url: string | null;
   published: boolean;
   display_order: number;
 };

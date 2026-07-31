@@ -7,21 +7,43 @@ import { ParallaxLayer } from "@/components/motion/ParallaxLayer";
 import { ProcessCards } from "@/components/motion/ProcessCards";
 import { Reveal } from "@/components/motion/Reveal";
 import { RevealGroup, RevealItem } from "@/components/motion/RevealGroup";
-import { caseStudies } from "@/lib/site";
 import { getHeroCopy, getPricingTiers } from "@/lib/supabase/content";
+import { createPublicClient } from "@/lib/supabase/public";
+import type { CaseStudyRecord } from "@/lib/admin/types";
 
-// Hero copy and pricing are admin-editable in Supabase — render dynamically
-// so changes show immediately instead of waiting for the next deploy.
+// Hero copy, pricing, and case studies are admin-editable in Supabase —
+// render dynamically so changes show immediately instead of waiting for
+// the next deploy.
 export const dynamic = "force-dynamic";
 
-const workPreview: WorkCardData[] = caseStudies.map((cs) => ({
-  slug: cs.slug,
-  title: cs.client,
-  industry: cs.industry,
-  badge: cs.result,
-  summary: cs.summary,
-  thumbnailUrl: null,
-}));
+/** Latest published case studies for the homepage preview — real content only, no placeholders. */
+async function getWorkPreview(): Promise<WorkCardData[]> {
+  try {
+    const supabase = createPublicClient();
+    const { data, error } = await supabase
+      .from("case_studies")
+      .select("*")
+      .eq("published", true)
+      .order("display_order", { ascending: true })
+      .limit(3)
+      .returns<CaseStudyRecord[]>();
+
+    if (error || !data) return [];
+
+    return data.map((cs) => ({
+      slug: cs.slug,
+      title: cs.title,
+      industry: cs.industry,
+      badge: cs.results || "Live project",
+      summary: cs.summary,
+      thumbnailUrl: cs.thumbnail_url,
+      websiteUrl: cs.website_url,
+    }));
+  } catch (error) {
+    console.error("[home] Failed to load case study preview:", error);
+    return [];
+  }
+}
 
 const stats = [
   { kind: "text" as const, value: "3–6 wk", label: "typical build timeline" },
@@ -85,7 +107,11 @@ const process = [
 ];
 
 export default async function Home() {
-  const [hero, pricing] = await Promise.all([getHeroCopy(), getPricingTiers()]);
+  const [hero, pricing, workPreview] = await Promise.all([
+    getHeroCopy(),
+    getPricingTiers(),
+    getWorkPreview(),
+  ]);
   const tiers = pricing.oneTime;
 
   return (
@@ -204,13 +230,22 @@ export default async function Home() {
             Real case studies from real local businesses.
           </h2>
         </Reveal>
-        <RevealGroup className="mt-12 grid gap-6 md:grid-cols-3">
-          {workPreview.map((study, i) => (
-            <RevealItem key={study.slug}>
-              <WorkCard study={study} index={i} />
-            </RevealItem>
-          ))}
-        </RevealGroup>
+        {workPreview.length > 0 ? (
+          <RevealGroup className="mt-12 grid gap-6 md:grid-cols-3">
+            {workPreview.map((study, i) => (
+              <RevealItem key={study.slug}>
+                <WorkCard study={study} index={i} />
+              </RevealItem>
+            ))}
+          </RevealGroup>
+        ) : (
+          <Reveal>
+            <p className="mt-12 text-muted">
+              We&apos;re onboarding our first clients now — case studies will
+              be published here as soon as sites go live.
+            </p>
+          </Reveal>
+        )}
       </Section>
 
       <Section>
