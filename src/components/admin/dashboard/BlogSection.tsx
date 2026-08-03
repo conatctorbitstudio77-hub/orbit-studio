@@ -11,6 +11,7 @@ import {
   adminInputClass,
 } from "@/components/admin/ui";
 import { createClient } from "@/lib/supabase/client";
+import { revalidateContent } from "@/lib/admin/actions";
 import type { BlogPostRecord } from "@/lib/admin/types";
 
 type Draft = { title: string; published: boolean };
@@ -54,6 +55,7 @@ export function BlogSection({ posts }: { posts: BlogPostRecord[] }) {
     }
     setDraft(emptyDraft);
     setAdding(false);
+    await revalidateContent(["blog-posts"]);
     router.refresh();
   }
 
@@ -80,6 +82,7 @@ export function BlogSection({ posts }: { posts: BlogPostRecord[] }) {
       return;
     }
     setEditingId(null);
+    await revalidateContent(["blog-posts"]);
     router.refresh();
   }
 
@@ -96,6 +99,7 @@ export function BlogSection({ posts }: { posts: BlogPostRecord[] }) {
       window.alert("Couldn't save — try again.");
       return;
     }
+    await revalidateContent(["blog-posts"]);
     router.refresh();
   }
 
@@ -110,6 +114,7 @@ export function BlogSection({ posts }: { posts: BlogPostRecord[] }) {
       window.alert("Couldn't remove — try again.");
       return;
     }
+    await revalidateContent(["blog-posts"]);
     router.refresh();
   }
 

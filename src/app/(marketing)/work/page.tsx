@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cacheLife, cacheTag } from "next/cache";
 import { Button } from "@/components/Button";
 import { Eyebrow, Section } from "@/components/Section";
 import { WorkCard, type WorkCardData } from "@/components/WorkCard";
@@ -13,12 +14,12 @@ export const metadata: Metadata = {
     "Real websites built for real local service businesses. Every case study links to a live site — no mockups.",
 };
 
-// Case studies are admin-editable in Supabase — render dynamically so
-// publishing one shows immediately instead of waiting for the next deploy.
-export const dynamic = "force-dynamic";
-
 /** Published case studies from Supabase — real content only, no placeholders. */
 async function getCaseStudies(): Promise<WorkCardData[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("case-studies");
+
   try {
     const supabase = createPublicClient();
     const { data, error } = await supabase

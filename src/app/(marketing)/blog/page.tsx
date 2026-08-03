@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { cacheLife, cacheTag } from "next/cache";
 import { Eyebrow, Section } from "@/components/Section";
 import { Reveal } from "@/components/motion/Reveal";
 import { RevealGroup, RevealItem } from "@/components/motion/RevealGroup";
@@ -13,15 +14,15 @@ export const metadata: Metadata = {
     "Practical guides on getting found online and booking more jobs — written for local service business owners, not marketers.",
 };
 
-// Posts are admin-editable in Supabase — render dynamically so publishing
-// a post shows immediately instead of waiting for the next deploy.
-export const dynamic = "force-dynamic";
-
 /**
  * Fetches published posts from Supabase. Falls back to the static
  * "coming soon" stubs on any failure, same pattern as /work.
  */
 async function getPosts(): Promise<BlogPostRecord[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("blog-posts");
+
   try {
     const supabase = createPublicClient();
     const { data, error } = await supabase

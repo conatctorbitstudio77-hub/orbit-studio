@@ -11,6 +11,7 @@ import {
   adminInputClass,
 } from "@/components/admin/ui";
 import { createClient } from "@/lib/supabase/client";
+import { revalidateContent } from "@/lib/admin/actions";
 import type {
   FaqRecord,
   PricingTierKind,
@@ -141,6 +142,7 @@ export function SettingsSection({
         }
       }
 
+      await revalidateContent(["site-settings", "pricing-tiers", "faqs"]);
       setSaved(true);
       router.refresh();
     } catch (error) {

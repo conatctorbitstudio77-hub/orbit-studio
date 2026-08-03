@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cacheLife, cacheTag } from "next/cache";
 import { marked } from "marked";
 import { Eyebrow, Section } from "@/components/Section";
 import { Reveal } from "@/components/motion/Reveal";
 import { createPublicClient } from "@/lib/supabase/public";
 import type { BlogPostRecord } from "@/lib/admin/types";
 
-// Posts are admin-editable in Supabase — render dynamically so publishing
-// a post shows immediately instead of waiting for the next deploy.
-export const dynamic = "force-dynamic";
-
 async function getPost(slug: string): Promise<BlogPostRecord | null> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("blog-posts");
+
   try {
     const supabase = createPublicClient();
     const { data, error } = await supabase

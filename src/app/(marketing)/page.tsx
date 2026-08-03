@@ -1,3 +1,4 @@
+import { cacheLife, cacheTag } from "next/cache";
 import { Button } from "@/components/Button";
 import { Container } from "@/components/Container";
 import { Eyebrow, Section } from "@/components/Section";
@@ -11,13 +12,12 @@ import { getHeroCopy, getPricingTiers } from "@/lib/supabase/content";
 import { createPublicClient } from "@/lib/supabase/public";
 import type { CaseStudyRecord } from "@/lib/admin/types";
 
-// Hero copy, pricing, and case studies are admin-editable in Supabase —
-// render dynamically so changes show immediately instead of waiting for
-// the next deploy.
-export const dynamic = "force-dynamic";
-
 /** Latest published case studies for the homepage preview — real content only, no placeholders. */
 async function getWorkPreview(): Promise<WorkCardData[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("case-studies");
+
   try {
     const supabase = createPublicClient();
     const { data, error } = await supabase

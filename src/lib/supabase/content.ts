@@ -1,3 +1,4 @@
+import { cacheLife, cacheTag } from "next/cache";
 import { createPublicClient } from "@/lib/supabase/public";
 import { site, tiers as defaultTiers, carePlans as defaultCarePlans, type Tier } from "@/lib/site";
 import { faqs as defaultFaqs, type Faq } from "@/lib/faq";
@@ -12,6 +13,10 @@ import type { PricingTierRecord, SiteSettingsRecord, FaqRecord } from "@/lib/adm
  */
 
 export async function getHeroCopy(): Promise<{ title: string; subtitle: string }> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("site-settings");
+
   const fallback = {
     title: "Stop losing jobs to the competitor with the better website.",
     subtitle: site.description,
@@ -47,6 +52,10 @@ function toTier(row: PricingTierRecord): Tier {
 }
 
 export async function getPricingTiers(): Promise<{ oneTime: Tier[]; monthly: Tier[] }> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("pricing-tiers");
+
   const fallback = { oneTime: defaultTiers, monthly: defaultCarePlans };
   try {
     const supabase = createPublicClient();
@@ -67,6 +76,10 @@ export async function getPricingTiers(): Promise<{ oneTime: Tier[]; monthly: Tie
 }
 
 export async function getFaqs(): Promise<Faq[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("faqs");
+
   try {
     const supabase = createPublicClient();
     const { data, error } = await supabase

@@ -18,8 +18,6 @@ import type {
   SiteSettingsRecord,
 } from "@/lib/admin/types";
 
-export const dynamic = "force-dynamic";
-
 export const metadata: Metadata = {
   title: "Admin Dashboard",
   robots: { index: false, follow: false },

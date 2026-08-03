@@ -1,9 +1,13 @@
 import Link from "next/link";
+import { cacheLife } from "next/cache";
 import { Container } from "./Container";
 import { Logo } from "./Logo";
 import { nav, site } from "@/lib/site";
 
-export function Footer() {
+export async function Footer() {
+  "use cache";
+  cacheLife("days");
+
   return (
     <footer className="section-ink border-t border-border">
       <Container className="grid gap-10 py-16 md:grid-cols-3">

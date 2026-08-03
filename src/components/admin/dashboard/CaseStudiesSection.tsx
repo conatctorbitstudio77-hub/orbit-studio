@@ -13,6 +13,7 @@ import {
 } from "@/components/admin/ui";
 import { industries } from "@/lib/industries";
 import { createClient } from "@/lib/supabase/client";
+import { revalidateContent } from "@/lib/admin/actions";
 import type { CaseStudyRecord } from "@/lib/admin/types";
 
 type Draft = {
@@ -71,6 +72,7 @@ export function CaseStudiesSection({ caseStudies }: { caseStudies: CaseStudyReco
     }
     setDraft(emptyDraft);
     setAdding(false);
+    await revalidateContent(["case-studies"]);
     router.refresh();
   }
 
@@ -104,6 +106,7 @@ export function CaseStudiesSection({ caseStudies }: { caseStudies: CaseStudyReco
       return;
     }
     setEditingId(null);
+    await revalidateContent(["case-studies"]);
     router.refresh();
   }
 
@@ -118,6 +121,7 @@ export function CaseStudiesSection({ caseStudies }: { caseStudies: CaseStudyReco
       window.alert("Couldn't remove — try again.");
       return;
     }
+    await revalidateContent(["case-studies"]);
     router.refresh();
   }
 
@@ -134,6 +138,7 @@ export function CaseStudiesSection({ caseStudies }: { caseStudies: CaseStudyReco
       window.alert("Couldn't save — try again.");
       return;
     }
+    await revalidateContent(["case-studies"]);
     router.refresh();
   }
 
